@@ -91,7 +91,7 @@ class Divert extends RObject
 		return me;
 	}
 
-	public override function Equals ( obj:RObject):Bool
+	public override function Equals (obj:Dynamic):Bool
 	{
 		var otherDivert = LibUtil.as(obj,Divert);
 		if (otherDivert!=null) {
