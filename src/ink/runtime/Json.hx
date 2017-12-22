@@ -328,6 +328,16 @@ class Json
 				return varAss;
 			}
 
+			// Tag
+			if ((propValue = LibUtil.tryGetValueDynamic(obj, '#'))) {
+				return null;
+			}
+			
+			// List value
+			if ((propValue = LibUtil.tryGetValueDynamic(obj, 'list'))) {
+				return null;
+			}
+			
 			if (Reflect.field(obj, "originalChoicePath") != null)
 				return JObjectToChoice(obj);
 				
@@ -636,6 +646,8 @@ class Json
 		_controlCommandNames[cast CommandType.StartThread] = "thread";
 		_controlCommandNames[cast CommandType.Done] = "done";
 		_controlCommandNames[cast CommandType.End] = "end";
+		_controlCommandNames[cast CommandType.Random] = "rnd";
+		_controlCommandNames[cast CommandType.SeedRandom] = "srnd";
 		
 		
 		var len:Int  =  cast CommandType.TOTAL_VALUES;
