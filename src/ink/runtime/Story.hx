@@ -28,7 +28,7 @@ typedef VariableObserver = String->Dynamic->Void;
 @:expose
 class Story extends RObject
 {
-	static public inline var inkVersionCurrent:Int = 12;
+	static public inline var inkVersionCurrent:Int = 17;
 	public static inline var inkVersionMinimumCompatible:Int = 12;
 	
 	
