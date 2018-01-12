@@ -83,6 +83,7 @@ class StoryState
 	public var turnIndices:Map<String, Int>;// { get; private set; }
 	public var  currentTurnIndex:Int; // { get; private set; }
 	public var  storySeed:Int;  //{ get; private set; }
+	public var previousRandom:Int; // { get; set; }
 	public var  didSafeExit:Bool;// { get; set; }
 
 	public var story:Story;// { get; set; }
@@ -206,6 +207,7 @@ class StoryState
 		// Seed the shuffle random numbers
 		var timeSeed:Int = Std.int( Date.now().getTime() ); // DateTime.Now.Millisecond;
 		storySeed = Std.int(new ParkMiller(timeSeed).random())  % 100;// (new Random (timeSeed)).Next () % 100;
+		previousRandom = 0;
 
 		currentChoices = new List<Choice> ();
 
@@ -257,6 +259,7 @@ class StoryState
 
 		copy.currentTurnIndex = currentTurnIndex;
 		copy.storySeed = storySeed;
+		copy.previousRandom = previousRandom;
 
 		copy.didSafeExit = didSafeExit;
 
@@ -314,6 +317,28 @@ class StoryState
 			Reflect.setField(obj,"turnIndices", Json.IntDictionaryToJObject (turnIndices));
 			Reflect.setField(obj,"turnIdx", currentTurnIndex);
 			Reflect.setField(obj,"storySeed", storySeed);
+			// Reflect.setField(obj,'previousRandom', previousRandom);
+
+			// !!!!!!!!!!!
+                // previousRandom = (int)jObject ["previousRandom"];
+
+				// object jChoiceThreadsObj = null;
+				// jObject.TryGetValue("choiceThreads", out jChoiceThreadsObj);
+				// var jChoiceThreads = (Dictionary<string, object>)jChoiceThreadsObj;
+
+				// foreach (var c in _currentChoices) {
+				// 	c.choicePoint = (ChoicePoint) story.ContentAtPath (new Path (c.originalChoicePath));
+
+				// 	var foundActiveThread = callStack.ThreadWithIndex(c.originalThreadIndex);
+				// 	if( foundActiveThread != null ) {
+				// 		c.threadAtGeneration = foundActiveThread;
+				// 	} else {
+				// 		var jSavedChoiceThread = (Dictionary <string, object>) jChoiceThreads[c.originalThreadIndex.ToString()];
+				// 		c.threadAtGeneration = new CallStack.Thread(jSavedChoiceThread, story);
+				// 	}
+				// }
+
+
 
 			Reflect.setField(obj,"inkSaveVersion", kInkSaveStateVersion);
 
@@ -369,6 +394,7 @@ class StoryState
 		turnIndices = Json.JObjectToIntDictionary (Reflect.field(jObject,"turnIndices"));  //(Dictionary<string, object>)
 		currentTurnIndex = Std.int( Reflect.field(jObject,"turnIdx"));  //(int)
 		storySeed = Std.int( Reflect.field(jObject,"storySeed"));  //(int)
+		previousRandom = Std.int(Reflect.field(jObject,'previousRandom')); //(int)
 
 		var jChoiceThreadsObj:Dynamic = null;
 		jChoiceThreadsObj = Reflect.field(jObject, "choiceThreads");  //jObject.TryGetValue("choiceThreads", out jChoiceThreadsObj);
