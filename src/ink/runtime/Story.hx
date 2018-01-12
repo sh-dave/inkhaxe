@@ -1215,6 +1215,50 @@ class Story extends RObject
 				state.ForceEndFlow ();
 				//break;
 
+			case ControlCommand.CommandType.Random:
+				var maxInt = LibUtil.as(state.PopEvaluationStack(), IntValue);
+				var minInt = LibUtil.as(state.PopEvaluationStack(), IntValue);
+
+				if (minInt == null) {
+					ErrorThrow('Invalid value for minimum parameter of RANDOM(min, max)');
+				}
+
+				if (maxInt == null) {
+					ErrorThrow('Invalid value for maximum parameter of RANDOM(min, max)');
+
+				}
+
+				// // +1 because it's inclusive of min and max, for e.g. RANDOM(1,6) for a dice roll.
+				var randomRange = maxInt.value - minInt.value + 1;
+				if (randomRange <= 0) {
+					ErrorThrow('RANDOM was called with minimum as ${minInt.value} and maximum as ${maxInt.value}. The maximum must be larger.');
+				}
+
+				var resultSeed = state.storySeed + state.previousRandom;
+				// var rnr = ink.random.Random.randRange(minInt, maxInt);
+
+				// var nextRandom = random.Next ();
+				// var chosenValue = (nextRandom % randomRange) + minInt.value;
+				// state.PushEvaluationStack (new IntValue (chosenValue));
+
+				// // Next random number (rather than keeping the Random object around)
+				// state.previousRandom = nextRandom;
+				// break;
+
+
+			case ControlCommand.CommandType.SeedRandom:
+				var seed = LibUtil.as(state.PopEvaluationStack(), IntValue);
+
+				if (seed == null) {
+					ErrorThrow('Invalid value passed to SEED_RANDOM');
+				}
+
+				// Story seed affects both RANDOM and shuffle behaviour
+				state.storySeed = seed.value;
+				state.previousRandom = 0;
+
+				// SEED_RANDOM returns nothing.
+				state.PushEvaluationStack(new VoidObj());
 			default:
 				ErrorThrow ("unhandled ControlCommand: " + evalCommand);
 				//break;
