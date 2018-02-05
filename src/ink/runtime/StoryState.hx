@@ -192,6 +192,7 @@ class StoryState
 		 this.story = story;
 
 		_outputStream = new Array<RObject> ();
+		OutputStreamDirty();
 
 		evaluationStack = new Array<RObject> ();
 
@@ -228,6 +229,7 @@ class StoryState
 		var copy = new StoryState(story);
 
 		LibUtil.addRangeForArray(copy.outputStream, _outputStream); //copy.outputStream.AddRange(_outputStream);
+		OutputStreamDirty();
 		LibUtil.addRangeForList(copy.currentChoices, currentChoices); //copy.currentChoices.AddRange(currentChoices);
 
 		if (hasError) {
@@ -369,6 +371,7 @@ class StoryState
 		evaluationStack = Json.JArrayToRuntimeObjArray( Reflect.field(jObject,"evalStack"));  //((List<object>)
 
 		_outputStream = Json.JArrayToRuntimeObjArray( Reflect.field(jObject,"outputStream"));  //((List<object>)
+		OutputStreamDirty();
 
 		// tocheck: this cast should hopefully not yield problems on all targets..
 		currentChoices = cast Json.JArrayToRuntimeObjList( Reflect.field(jObject,"currentChoices"));  //<Choice>((List<object>)
@@ -423,6 +426,7 @@ class StoryState
 	public function ResetOutput():Void
 	{
 		LibUtil.clearArray(_outputStream); // _outputStream.clear();
+		OutputStreamDirty();
 	}
 
 	// Push to output stream, but split out newlines in text for consistency
@@ -441,6 +445,7 @@ class StoryState
 		}
 
 		PushToOutputStreamIndividual (obj);
+		OutputStreamDirty();
 	}
 
 	// At both the start and the end of the string, split out the new lines like so:
@@ -584,6 +589,8 @@ class StoryState
 		if (includeInOutput) {
 			_outputStream.push (obj);
 		}
+
+		OutputStreamDirty();
 	}
 
 
@@ -630,10 +637,14 @@ class StoryState
 			}
 		}
 
+// TODO (DK) logic changed, it's some while loop now
+
 		// Remove the glue (it will come before the whitespace,
 		// so index is still valid)
 		if (stopAndRemoveRightGlue && rightGluePos > -1)
 			LibUtil.removeArrayItemAtIndex(outputStream, rightGluePos);// _outputStream.RemoveAt (rightGluePos);
+
+		OutputStreamDirty();
 	}
 
 	function TrimFromExistingGlue():Void
@@ -646,6 +657,8 @@ class StoryState
 			else
 				i++;
 		}
+
+		OutputStreamDirty();
 	}
 
 
@@ -664,6 +677,8 @@ class StoryState
 			}
 			i--; // continuing...
 		}
+
+		OutputStreamDirty();
 	}
 
 
@@ -807,12 +822,17 @@ class StoryState
 		currentErrors.add (message);
 	}
 
+	function OutputStreamDirty() {
+		_outputStreamTextDirty = true;
+		_outputStreamTagsDirty = true;
+	}
 
 	// REMEMBER! REMEMBER! REMEMBER!
 	// When adding state, update the Copy method and serialisation
 	// REMEMBER! REMEMBER! REMEMBER!
 
 	var _outputStream:Array<RObject>;  // formerly list. consider: after everything's done. de.polydonal.ds List implementation
+	var _outputStreamTextDirty = true;
 	var _outputStreamTagsDirty = true;
 	var _currentRightGlue:Glue;
 
