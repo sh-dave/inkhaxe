@@ -329,12 +329,12 @@ class Json
 			}
 
 			// Tag
-			if ((propValue = LibUtil.tryGetValueDynamic(obj, '#'))) {
+			if ((propValue = LibUtil.tryGetValueDynamic(obj, '#')) != null) {
 				return new Tag(cast (propValue, String));
 			}
 
 			// List value
-			if ((propValue = LibUtil.tryGetValueDynamic(obj, 'list'))) {
+			if ((propValue = LibUtil.tryGetValueDynamic(obj, 'list')) != null) {
 				return null;
 			}
 
